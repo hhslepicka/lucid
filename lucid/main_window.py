@@ -4,8 +4,9 @@ import operator
 
 from qtpy.QtWidgets import (QMainWindow, QDockWidget, QStackedWidget,
                             QToolBar, QStyle, QLineEdit, QSizePolicy,
-                            QWidget)
-from qtpy.QtCore import Qt
+                            QWidget, QApplication)
+from qtpy.QtGui import QCursor
+from qtpy.QtCore import Qt, Signal, QPoint
 
 logger = logging.getLogger(__name__)
 
@@ -72,9 +73,29 @@ class LucidMainWindow(QMainWindow):
         if embedded_docks:
             super().tabifyDockWidget(embedded_docks[0], dock)
         # Raise to visible
+
+    def raise_dock(self, dock):
+        """
+        Raise a QDockWidget to be visible
+
+        If the ``QDockWidget`` is currently open and floating the widget will
+        be brought to the location of the mouse. Otherwise the ``QDockWidget``
+        will be brought to the front of the tab system.
+        """
+        # If the dock was closed while floating, we want it to reappear in the
+        # tab system
+        dock.setFloating(not dock.isHidden())
+        # Raise to visibility
         dock.show()
         dock.raise_()
         dock.setFocus()
+        if dock.isFloating():
+            # Change focus to new window
+            QApplication.instance().setActiveWindow(dock)
+            # Move center of QWidget to mouse position
+            cursor = QCursor()
+            position = cursor.pos() - QPoint(dock.width(), dock.height())/2
+            dock.move(position)
 
     @property
     def _docks(self):
