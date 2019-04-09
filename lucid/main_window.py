@@ -125,7 +125,7 @@ class LucidMainWindow(QMainWindow):
         return cls.find_window(parent)
 
     @classmethod
-    def in_dock(cls, func=None, area=None):
+    def in_dock(cls, func=None, title=None, area=None):
         """
         Wrapper to show QWidget in ``LucidMainWindow``
 
@@ -149,7 +149,7 @@ class LucidMainWindow(QMainWindow):
         area = area or cls.allowed_docks[0]
         # When the decorator is not called
         if not func:
-            return functools.partial(cls.in_dock, area=area)
+            return functools.partial(cls.in_dock, area=area, title=title)
 
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
@@ -170,10 +170,15 @@ class LucidMainWindow(QMainWindow):
                 widget.setWindowFlags(Qt.Dialog)
                 widget.show()
             else:
-                # Create a DockWidget
-                dock = QDockWidget()
-                dock.setWidget(widget)
-                window.addDockWidget(area, dock)
+                if widget.parent() in window._docks:
+                    window.raise_dock(widget.parent())
+                else:
+                    # Create a DockWidget
+                    dock = LucidDockWidget(title)
+                    dock.setWidget(widget)
+                    if title:  # Name for later recall
+                        dock.setObjectName(title)
+                    window.addDockWidget(area, dock)
             return widget
 
         return wrapper
