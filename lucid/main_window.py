@@ -101,8 +101,7 @@ class LucidMainWindow(QMainWindow):
     @property
     def _docks(self):
         """QDockWidget children"""
-        return [widget for widget in self.children()
-                if isinstance(widget, QDockWidget)]
+        return self.findChildren(QDockWidget)
 
     @classmethod
     def find_window(cls, widget):
