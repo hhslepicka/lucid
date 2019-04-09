@@ -42,7 +42,7 @@ def test_main_window_find_window_with_orphan(qtbot):
         LucidMainWindow.find_window(widget)
 
 
-def test_main_window_in_dock(main_window, qtbot):
+def test_main_window_in_dock_no_args(main_window, qtbot):
 
     @LucidMainWindow.in_dock
     def create_widget():
@@ -54,9 +54,11 @@ def test_main_window_in_dock(main_window, qtbot):
     assert len(main_window._docks) == 1
 
 
-def test_main_window_in_dock_with_area(main_window, qtbot):
+def test_main_window_in_dock(main_window, qtbot):
+    title = 'Test Dock'
 
-    @LucidMainWindow.in_dock(area=Qt.RightDockWidgetArea)
+    @LucidMainWindow.in_dock(area=Qt.RightDockWidgetArea,
+                             title=title)
     def create_widget():
         widget = QWidget(parent=main_window)
         qtbot.addWidget(widget)
@@ -64,6 +66,7 @@ def test_main_window_in_dock_with_area(main_window, qtbot):
 
     create_widget()
     assert len(main_window._docks) == 1
+    assert main_window._docks[0].windowTitle() == title
 
 
 def test_main_window_in_dock_with_orphan(qtbot):
