@@ -63,13 +63,12 @@ class LucidMainWindow(QMainWindow):
         # LucidMainWindow.allowed_docks
         allowed_flags = functools.reduce(operator.or_, self.allowed_docks)
         dock.setAllowedAreas(allowed_flags)
+        embedded_docks = [curr_dock for curr_dock in self._docks
+                          if self.dockWidgetArea(curr_dock) == area]
         super().addDockWidget(area, dock)
         # If we already have an embedded dock, add it to existing dock. This
         # needs to exist because even with ForceTabbedDocks the dock will be
         # split if we add with regular API
-        embedded_docks = [curr_dock for curr_dock in self._docks
-                          if self.dockWidgetArea(curr_dock) == area
-                          and curr_dock.isVisible()]
         if embedded_docks:
             super().tabifyDockWidget(embedded_docks[0], dock)
         # Bring dock to front
