@@ -84,11 +84,7 @@ class LucidMainWindow(QMainWindow):
         """
         # If the dock was closed while floating, we want it to reappear in the
         # tab system
-        dock.setFloating(not dock.isHidden())
-        # Raise to visibility
-        dock.show()
-        dock.raise_()
-        dock.setFocus()
+        dock.setFloating(dock.isFloating() and not dock.isHidden())
         if dock.isFloating():
             # Change focus to new window
             QApplication.instance().setActiveWindow(dock)
@@ -96,6 +92,10 @@ class LucidMainWindow(QMainWindow):
             cursor = QCursor()
             position = cursor.pos() - QPoint(dock.width(), dock.height())/2
             dock.move(position)
+        # Raise to visibility
+        dock.show()
+        dock.raise_()
+        dock.setFocus()
 
     @property
     def _docks(self):
