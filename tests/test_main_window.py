@@ -7,13 +7,6 @@ from qtpy.QtWidgets import QDockWidget, QWidget
 from lucid import LucidMainWindow
 
 
-@pytest.fixture(scope='function')
-def main_window(qtbot):
-    main_window = LucidMainWindow()
-    qtbot.addWidget(main_window)
-    return main_window
-
-
 def test_add_multiple_docks(main_window, qtbot):
     first_dock = QDockWidget()
     second_dock = QDockWidget()
